@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lecture 17 · A Practical Provider App</title>
+  <meta name="description" content="Mobile App Development with Flutter, Lecture 17: Build Souq Tripoli, a small shop app with a Product model, a CartProvider that owns a list, MultiProvider and a clean folder structure.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Sora:wght@600;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="flutter-logo" viewBox="0 0 166 210">
+    <path fill="#44D1FD" d="M10 101 100 11h56L38 129z"/>
+    <path fill="#1FBCFD" d="M51 150 100 102h56l-77 76z"/>
+    <path fill="#08589C" d="M79 178 107 150l49 49h-56z"/>
+  </symbol>
+  <symbol id="i-git" viewBox="0 0 24 24"><circle cx="6" cy="18" r="3"/><circle cx="18" cy="6" r="3"/><path d="M6 3v12"/><path d="M18 9a9 9 0 0 1-9 9"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2.5"/><path d="M11 18h2"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><path d="M12 15V3"/></symbol>
+  <symbol id="i-windows" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></symbol>
+  <symbol id="i-laptop" viewBox="0 0 24 24"><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9"/><path d="M2 19.5 4 16h16l2 3.5a1 1 0 0 1-.9 1.5H2.9a1 1 0 0 1-.9-1.5z"/></symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/><path d="M5 3v4M3 5h4M19 17v4M17 19h4"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></symbol>
+  <symbol id="i-disk" viewBox="0 0 24 24"><path d="M22 12H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.8 4H7.2a2 2 0 0 0-1.7 1.1z"/><path d="M6 16h.01M10 16h.01"/></symbol>
+  <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M5 12.6a11 11 0 0 1 14 0"/><path d="M1.4 9a16 16 0 0 1 21.2 0"/><path d="M8.5 16.1a6 6 0 0 1 7 0"/><path d="M12 20h.01"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.7 18-8-14a2 2 0 0 0-3.5 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3z"/><path d="M12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9l-.8-1.2A2 2 0 0 0 7.9 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><polygon points="12 2 15.1 8.3 22 9.3 17 14.1 18.2 21 12 17.8 5.8 21 7 14.1 2 9.3 8.9 8.3 12 2"/></symbol>
+  <symbol id="i-package" viewBox="0 0 24 24"><path d="m7.5 4.3 9 5.1"/><path d="M21 8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.7z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-terminal" viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><path d="M12 19h8"/></symbol>
+  <symbol id="i-activity" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol>
+  <symbol id="i-mouse" viewBox="0 0 24 24"><path d="m4 4 7 17 2.5-7.5L21 11z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-chrome" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="M21.2 8H12M3.9 6.1 8.5 14M10.9 21.9l4.6-7.9"/></symbol>
+  <symbol id="i-cable" viewBox="0 0 24 24"><path d="M17 21v-2a1 1 0 0 1-1-1v-1a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1a1 1 0 0 1-1 1v2"/><path d="M19 15V6.5a3.5 3.5 0 0 0-7 0v11a3.5 3.5 0 0 1-7 0V9"/><path d="M3 9V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4z"/></symbol>
+  <symbol id="i-apple" viewBox="0 0 24 24"><path d="M12 7c-1.5-1.3-4.5-1.6-6 .5-1.6 2.3-1 6.6 1.3 9.9 1 1.4 2 2.6 3.2 2.5.9 0 1.2-.6 1.5-.6s.6.6 1.5.6c1.2.1 2.2-1.1 3.2-2.5 2.3-3.3 2.9-7.6 1.3-9.9-1.5-2.1-4.5-1.8-6-.5z"/><path d="M12 7c0-2 1-3.5 3-4"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 22a10 10 0 1 1 10-10c0 2.8-2.2 4-4 4h-2a2 2 0 0 0-1.5 3.3c.5.6.3 1.7-.5 2.2-.6.3-1.3.5-2 .5z"/><circle cx="7.5" cy="10.5" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16.5" cy="10.5" r="1"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></symbol>
+  <symbol id="i-map-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-cart" viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2 2h2l2.7 12.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 1.9-1.6L22 7H5.1"/></symbol>
+  <symbol id="i-cart-plus" viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2 2h2l2.7 12.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 1.9-1.6L22 7H5.1"/><path d="M13.5 8.5v5M11 11h5"/></symbol>
+  <symbol id="i-cart-off" viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2 2h2l2.7 12.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 1.9-1.6L22 7H5.1"/><path d="m3 3 18 18"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+  <symbol id="i-sweep" viewBox="0 0 24 24"><path d="M2 6h12"/><path d="M6 6V4h4v2"/><path d="M3.5 6v12a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2V6"/><path d="M16 9h6M16 13h5M16 17h3"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></symbol>
+  <symbol id="i-lotus" viewBox="0 0 24 24"><path d="M12 4c2.2 2.3 3.2 5 3.2 7.6S14 16.6 12 18c-2-1.4-3.2-3.8-3.2-6.4S9.8 6.3 12 4z"/><path d="M8.9 9.2C6 8.8 3.6 9.4 2 10.6c.4 4.7 4.5 7.9 10 7.4"/><path d="M15.1 9.2c2.9-.4 5.3.2 6.9 1.4-.4 4.7-4.5 7.9-10 7.4"/></symbol>
+  <symbol id="i-hive" viewBox="0 0 24 24"><polygon points="8.3 4.5 12 6.6 12 11 8.3 13.1 4.6 11 4.6 6.6"/><polygon points="15.7 4.5 19.4 6.6 19.4 11 15.7 13.1 12 11 12 6.6"/><polygon points="12 11 15.7 13.1 15.7 17.4 12 19.5 8.3 17.4 8.3 13.1"/></symbol>
+  <symbol id="i-tea" viewBox="0 0 24 24"><path d="M4 9h12v4a6 6 0 0 1-12 0z"/><path d="M16 10.5h1.5a2.5 2.5 0 0 1 0 5h-2"/><path d="M3 22h15"/><path d="M10 9V6"/><rect x="8" y="2" width="4" height="4" rx=".8"/></symbol>
+  <symbol id="i-coffee" viewBox="0 0 24 24"><path d="M10 2v2M14 2v2M6 2v2"/><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/></symbol>
+  <symbol id="i-croissant" viewBox="0 0 24 24"><path d="m4.6 13.1 5.8-3.2c1.9-1 4.8 1.8 3.7 3.7l-3.2 5.8c-2.1 3.8-10.1-4.2-6.3-6.3z"/><path d="m10.5 9.5-1-2.3C9.2 6.5 8.8 6 8 6H4.5C2.8 6 2 6.5 2 8.5a7.7 7.7 0 0 0 2 4.8"/><path d="M8 6c0-1.6.2-4-2-4-2 0-2.5 2.2-2.5 4"/><path d="m14.5 13.5 2.3 1c.7.3 1.2.7 1.2 1.5v3.5c0 1.7-.5 2.5-2.5 2.5a7.7 7.7 0 0 1-4.8-2"/><path d="M18 16c1.6 0 4-.2 4 2 0 2-2.2 2.5-4 2.5"/></symbol>
+  <symbol id="i-bowl" viewBox="0 0 24 24"><path d="M3 11h18a9 8 0 0 1-18 0z"/><path d="M6.5 11a5.5 5 0 0 1 11 0"/><path d="M9 21.5h6"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.8 9.8 0 0 1 6.7 2.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.8 9.8 0 0 1-6.7-2.7L3 16"/><path d="M8 16H3v5"/></symbol>
+  <symbol id="i-flask" viewBox="0 0 24 24"><path d="M10 2v7.5a2 2 0 0 1-.2.9L4.7 20.6a1 1 0 0 0 .9 1.4h12.8a1 1 0 0 0 .9-1.4l-5.1-10.2a2 2 0 0 1-.2-.9V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.5 10 19 14 21 14 12.5 22 3"/></symbol>
+</svg>
+
+<div class="progress" aria-hidden="true"><span></span></div>
+
+<main class="deck">
+
+<!-- 01 · Title -->
+<section class="slide">
+  <div class="canvas"><div class="frame frame--title">
+    <div class="stagger">
+      <p class="kicker">Lecture 17 · Mobile App Development</p>
+      <h1 class="hero">State Management 3:<br><span class="grad-text">A Practical Provider App</span></h1>
+      <p class="lead lead--hero">Let's build <b>Souq Tripoli · <bdi lang="ar">سوق طرابلس</bdi></b>: a product grid, a details page and a cart, all sharing one <code>CartProvider</code>.</p>
+      <div class="chips">
+        <span class="chip"><span class="avatar">MI</span>Eng. Monther Ibrahim</span>
+        <span class="chip"><span class="avatar">M</span>Muhammad, M.Sc.</span>
+        <span class="chip">Fall 2026</span>
+      </div>
+      <p class="keys"><kbd>→</kbd> next &nbsp;·&nbsp; <kbd>F</kbd> fullscreen &nbsp;·&nbsp; <kbd>N</kbd> notes &nbsp;·&nbsp; <kbd>T</kbd> theme</p>
+    </div>
+    <div class="title-right" aria-hidden="true" style="display:grid; place-items:center;">
+      <div class="logo-glow" style="left:12%; top:10%; background: radial-gradient(circle, rgba(0, 150, 136, .34), transparent 65%);"></div>
+      <div style="position:relative;">
+      <div class="ph ph--teal ph--dark" style="--pw:13cqw; position:absolute; left:9.5cqw; top:3.2cqw; transform:rotate(7deg);">
+        <div class="ph__scr"><div class="ph__island"></div>
+          <div class="appbar"><span class="ab-title">Souq Tripoli</span><span class="ab-ico"><svg class="ico"><use href="#i-sun"/></svg></span><span class="ab-ico"><svg class="ico"><use href="#i-cart"/></svg><i class="m-badge">3</i></span></div><div class="m-grid"><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-lotus"/></svg></div><b>Dates</b><span class="ar" lang="ar">تمر</span><div class="pr"><span>15.00 LYD</span><svg class="ico"><use href="#i-cart-off"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-hive"/></svg></div><b>Honey</b><span class="ar" lang="ar">عسل</span><div class="pr"><span>45.00 LYD</span><svg class="ico"><use href="#i-cart-off"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-tea"/></svg></div><b>Green tea</b><span class="ar" lang="ar">شاي أخضر</span><div class="pr"><span>8.50 LYD</span><svg class="ico"><use href="#i-cart-off"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-coffee"/></svg></div><b>Arabic coffee</b><span class="ar" lang="ar">قهوة عربية</span><div class="pr"><span>22.00 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-croissant"/></svg></div><b>Bread</b><span class="ar" lang="ar">خبز</span><div class="pr"><span>1.50 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-bowl"/></svg></div><b>Couscous</b><span class="ar" lang="ar">كسكسي</span><div class="pr"><span>7.00 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div></div>
+        </div>
+      </div>
+      <div class="ph ph--teal" style="--pw:15.5cqw; position:relative; right:3cqw;">
+        <div class="ph__scr"><div class="ph__island"></div>
+          <div class="appbar"><span class="ab-title">Souq Tripoli</span><span class="ab-ico"><svg class="ico"><use href="#i-moon"/></svg></span><span class="ab-ico"><svg class="ico"><use href="#i-cart"/></svg><i class="m-badge">3</i></span></div><div class="m-grid"><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-lotus"/></svg></div><b>Dates</b><span class="ar" lang="ar">تمر</span><div class="pr"><span>15.00 LYD</span><svg class="ico"><use href="#i-cart-off"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-hive"/></svg></div><b>Honey</b><span class="ar" lang="ar">عسل</span><div class="pr"><span>45.00 LYD</span><svg class="ico"><use href="#i-cart-off"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-tea"/></svg></div><b>Green tea</b><span class="ar" lang="ar">شاي أخضر</span><div class="pr"><span>8.50 LYD</span><svg class="ico"><use href="#i-cart-off"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-coffee"/></svg></div><b>Arabic coffee</b><span class="ar" lang="ar">قهوة عربية</span><div class="pr"><span>22.00 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-croissant"/></svg></div><b>Bread</b><span class="ar" lang="ar">خبز</span><div class="pr"><span>1.50 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-bowl"/></svg></div><b>Couscous</b><span class="ar" lang="ar">كسكسي</span><div class="pr"><span>7.00 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div></div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div></div>
+  <aside class="notes"><p>Today is mostly live coding. Every slide is one small step; after each step the app still runs.</p></aside>
+</section>
+
+<!-- 02 · Learning objectives -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Today</p>
+      <h2 class="title">Learning objectives</h2>
+      <p class="lead">Mostly live coding: one small step per slide, and after each step the app still runs.</p>
+    </header>
+    <div class="body" style="grid-template-rows: 1fr auto;">
+      <div class="journey stagger">
+        <div class="stop"><div class="stop__dot"><svg class="ico"><use href="#i-package"/></svg><span class="stop__n">1</span></div><h3>Model</h3><p>a class with <code>final</code> fields</p></div>
+        <div class="stop"><div class="stop__dot"><svg class="ico"><use href="#i-cart"/></svg><span class="stop__n">2</span></div><h3>CartProvider</h3><p>a provider that owns a list</p></div>
+        <div class="stop"><div class="stop__dot"><svg class="ico"><use href="#i-layers"/></svg><span class="stop__n">3</span></div><h3>MultiProvider</h3><p>two providers for one app</p></div>
+        <div class="stop"><div class="stop__dot"><svg class="ico"><use href="#i-cpu"/></svg><span class="stop__n">4</span></div><h3>Separate</h3><p>keep logic out of widgets</p></div>
+        <div class="stop"><div class="stop__dot"><svg class="ico"><use href="#i-folder"/></svg><span class="stop__n">5</span></div><h3>Organize</h3><p>the code into folders</p></div>
+      </div>
+      <div class="callout callout--ok goal"><svg class="ico"><use href="#i-target"/></svg><div><b>Goal:</b> Souq Tripoli, three screens that share <b>one cart</b> and update by themselves.</div></div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Tell students that this structure (models, providers, screens, widgets) is what they will see in real Flutter apps, and what we keep using with APIs in Lectures 18–19.</p></aside>
+</section>
+
+<!-- 03 · What we will build -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">The app</p>
+      <h2 class="title">What we will build</h2>
+    </header>
+    <div class="body" style="grid-template-columns: auto 1fr; gap: 2.6cqw; align-items:center;">
+      <div class="phones stagger" style="gap:1cqw;">
+      <div class="ph-col"><span class="badge">1 · Products</span>
+      <div class="ph ph--teal" style="--pw:13.5cqw;">
+        <div class="ph__scr"><div class="ph__island"></div>
+          <div class="appbar"><span class="ab-title">Souq Tripoli</span><span class="ab-ico"><svg class="ico"><use href="#i-moon"/></svg></span><span class="ab-ico"><svg class="ico"><use href="#i-cart"/></svg><i class="m-badge">3</i></span></div><div class="m-grid"><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-lotus"/></svg></div><b>Dates</b><span class="ar" lang="ar">تمر</span><div class="pr"><span>15.00 LYD</span><svg class="ico"><use href="#i-cart-off"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-hive"/></svg></div><b>Honey</b><span class="ar" lang="ar">عسل</span><div class="pr"><span>45.00 LYD</span><svg class="ico"><use href="#i-cart-off"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-tea"/></svg></div><b>Green tea</b><span class="ar" lang="ar">شاي أخضر</span><div class="pr"><span>8.50 LYD</span><svg class="ico"><use href="#i-cart-off"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-coffee"/></svg></div><b>Arabic coffee</b><span class="ar" lang="ar">قهوة عربية</span><div class="pr"><span>22.00 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-croissant"/></svg></div><b>Bread</b><span class="ar" lang="ar">خبز</span><div class="pr"><span>1.50 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-bowl"/></svg></div><b>Couscous</b><span class="ar" lang="ar">كسكسي</span><div class="pr"><span>7.00 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div></div>
+        </div>
+      </div>
+      </div>
+      <div class="arrow-mid" style="gap:.5cqw; align-self:center; margin-top:2.6cqw;"><svg class="ico"><use href="#i-arrow-right"/></svg><small style="font:600 .95cqw/1.2 var(--font-body); color:var(--muted); white-space:nowrap;">tap a card</small></div>
+      <div class="ph-col"><span class="badge">2 · Details</span>
+      <div class="ph ph--teal" style="--pw:13.5cqw;">
+        <div class="ph__scr"><div class="ph__island"></div>
+          <div class="appbar"><span class="ab-ico"><svg class="ico"><use href="#i-back"/></svg></span><span class="ab-title">Green tea</span><span class="ab-ico"><svg class="ico"><use href="#i-cart"/></svg><i class="m-badge">3</i></span></div><div class="m-detail"><div class="pic"><svg class="ico"><use href="#i-tea"/></svg></div><div class="h1">Green tea</div><div class="h2" lang="ar">شاي أخضر</div><div class="h3">8.50 LYD</div><p >Green tea for a strong Libyan tea with mint.</p></div><div class="m-foot"><div class="m-btn m-btn--pri is-wide">Remove from cart</div></div>
+        </div>
+      </div>
+      </div>
+      <div class="arrow-mid" style="gap:.5cqw; align-self:center; margin-top:2.6cqw;"><svg class="ico"><use href="#i-arrow-right"/></svg><small style="font:600 .95cqw/1.2 var(--font-body); color:var(--muted); white-space:nowrap;">tap the badge</small></div>
+      <div class="ph-col"><span class="badge">3 · Cart</span>
+      <div class="ph ph--teal" style="--pw:13.5cqw;">
+        <div class="ph__scr"><div class="ph__island"></div>
+          <div class="appbar"><span class="ab-ico"><svg class="ico"><use href="#i-back"/></svg></span><span class="ab-title">My Cart (3)</span><span class="ab-ico"><svg class="ico"><use href="#i-sweep"/></svg></span></div><div class="m-list"><div class="m-tile"><svg class="ico"><use href="#i-lotus"/></svg><div class="t">Dates<small>15.00 LYD</small></div><span class="ab-ico"><svg class="ico"><use href="#i-trash"/></svg></span></div><div class="m-tile"><svg class="ico"><use href="#i-hive"/></svg><div class="t">Honey<small>45.00 LYD</small></div><span class="ab-ico"><svg class="ico"><use href="#i-trash"/></svg></span></div><div class="m-tile"><svg class="ico"><use href="#i-tea"/></svg><div class="t">Green tea<small>8.50 LYD</small></div><span class="ab-ico"><svg class="ico"><use href="#i-trash"/></svg></span></div></div><div class="m-total"><span>Total</span><b>68.50 LYD</b></div>
+        </div>
+      </div>
+      </div>
+      </div>
+      <div class="explain stagger">
+        <div class="say"><p>A shop shows everything at once: a <b>list</b> of data, a <b>total</b> computed from it, and the <b>same data</b> on three screens.</p></div>
+        <div class="callout callout--ok"><svg class="ico"><use href="#i-check-circle"/></svg><div><b>Same cart data</b> on all three screens</div></div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-refresh"/></svg><div>Change it anywhere, <b>every screen updates</b></div></div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>We pick a shop over a to-do app because it shows everything at once: a list of data in a provider, a value computed from the list (the total), and the same data on three screens.</p></aside>
+</section>
+
+<!-- 04 · Step 0 -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Build along · Setup</p>
+      <h2 class="title">Step 0: project, package and folders</h2>
+    </header>
+    <div class="body" style="grid-template-columns: 1.55fr 1fr; gap: 2.4cqw; align-items:start;">
+      <div class="card tree tree--wide stagger">
+          <div class="row"><span><span class="d">lib/</span></span><span class="note"></span></div>
+          <div class="row"><span><span class="g">├─ </span><span class="f">main.dart</span></span><span class="note"><code>MultiProvider</code> + <code>MaterialApp</code></span></div>
+          <div class="row"><span><span class="g">├─ </span><span class="d">models/</span><span class="f">product.dart</span></span><span class="note">what a product is</span></div>
+          <div class="row"><span><span class="g">├─ </span><span class="d">data/</span><span class="f">demo_products.dart</span></span><span class="note">our 6 products</span></div>
+          <div class="row"><span><span class="g">├─ </span><span class="d">providers/</span></span><span class="note"><code>cart_provider.dart</code>, <code>theme_provider.dart</code></span></div>
+          <div class="row"><span><span class="g">├─ </span><span class="d">screens/</span></span><span class="note">products, product_details, cart</span></div>
+          <div class="row"><span><span class="g">├─ </span><span class="d">theme/</span><span class="f">app_theme.dart</span></span><span class="note"><code>buildTheme()</code> from Lecture 10</span></div>
+          <div class="row"><span><span class="g">└─ </span><span class="d">widgets/</span></span><span class="note">cart_badge, product_card, app_button, theme_button</span></div>
+      </div>
+      <div class="side stagger">
+        <div class="term">
+          <div class="term__bar"><i></i><i></i><i></i><span>Terminal</span></div>
+<pre><span class="t-p">$</span> flutter create souq_tripoli
+<span class="t-p">$</span> cd souq_tripoli
+<span class="t-p">$</span> flutter pub add provider</pre>
+        </div>
+        <div class="callout callout--warn"><svg class="ico"><use href="#i-alert"/></svg><div>Delete <code>test/widget_test.dart</code>: it tests the old counter app</div></div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-copy"/></svg><div>Copy <code>app_button.dart</code> (Lecture 08), <code>app_theme.dart</code> (Lecture 10), <code>theme_provider.dart</code> and <code>theme_button.dart</code> (Lecture 16)</div></div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Create the empty folders in VS Code first. <code>data/</code> holds a fixed list today; in Lectures 18–19 the products will come from the internet instead. Copy <code>app_button.dart</code> from Lecture 08, <code>theme/app_theme.dart</code> from Lecture 10, and <code>theme_provider.dart</code> and <code>theme_button.dart</code> from Lecture 16 (only the import path in <code>theme_button.dart</code> changes).</p></aside>
+</section>
+
+<!-- 05 · Step 1 model -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Build along · Model</p>
+      <h2 class="title">Step 1: the model</h2>
+    </header>
+    <div class="body" style="grid-template-columns: auto 1fr auto; gap: 2cqw; align-items:start;">
+      <div class="term code">
+        <div class="term__bar"><i></i><i></i><i></i><span>lib/models/product.dart</span></div>
+<pre class="hl" data-hl="2,8-13">class Product {
+  const Product({
+    required this.id,
+    required this.name,
+    // ... one "required this.x" for every field
+  });
+
+  final String id;
+  final String name;
+  final String arabicName;
+  final double price; // in Libyan dinars (LYD)
+  final String description;
+  final IconData icon;
+}</pre>
+      </div>
+      <div class="explain stagger">
+        <div class="say"><p>A <b>model</b> describes one thing in our app: a product.</p></div>
+        <div class="defs"><div class="def"><code>final</code><span>a product never changes after it is created</span></div><div class="def"><code>const</code><span>we can write the whole product list as a constant</span></div><div class="def"><code>id</code><span>how we recognise a product, even if two have the same name</span></div></div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-info"/></svg><div>At the top: <code>import 'package:flutter/widgets.dart';</code> (for <code>IconData</code>)</div></div>
+      </div>
+      <div class="ph-col"><span class="badge">Where the fields show up</span>
+      <div class="ph ph--teal" style="--pw:14.5cqw;">
+        <div class="ph__scr"><div class="ph__island"></div>
+          <div class="appbar"><span class="ab-ico"><svg class="ico"><use href="#i-back"/></svg></span><span class="ab-title">Dates</span><span class="ab-ico"><svg class="ico"><use href="#i-cart"/></svg></span></div><div class="m-detail is-tagged"><div class="pic is-tag" data-tag="icon"><svg class="ico"><use href="#i-lotus"/></svg></div><div class="h1 is-tag" data-tag="name">Dates</div><div class="h2 is-tag" data-tag="arabicName" lang="ar">تمر</div><div class="h3 is-tag" data-tag="price">15.00 LYD</div><p class=" is-tag" data-tag="description">Sweet dates from the south of Libya. 1 kg box.</p></div><div class="m-foot"><div class="m-btn m-btn--pri is-wide">Add to cart</div></div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p><code>id</code> is how we recognise a product, even if two products have the same name. <code>const</code> constructor: we can write the whole product list as a constant. The phone is a preview of the details page (Step 10): every field except <code>id</code> is shown there.</p></aside>
+</section>
+
+<!-- 06 · Step 2 data -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Build along · Sample data</p>
+      <h2 class="title">Step 2: the sample data</h2>
+    </header>
+    <div class="body" style="grid-template-columns: 1fr auto; gap: 2.4cqw; align-items:start;">
+      <div class="side">
+        <div class="term code">
+        <div class="term__bar"><i></i><i></i><i></i><span>lib/data/demo_products.dart</span></div>
+<pre class="hl">// A fixed list for now. In Lectures 18–19 products come from the internet.
+const List&lt;Product&gt; demoProducts = [
+  Product(
+    id: 'p1',
+    name: 'Dates',
+    arabicName: 'تمر',
+    price: 15.0,
+    description: 'Sweet dates from the south of Libya. 1 kg box.',
+    icon: Icons.spa,
+  ),
+  // p2 Honey 45.0, p3 Green tea 8.5, p4 Arabic coffee 22.0,
+  // p5 Bread 1.5, p6 Couscous 7.0 (see the complete example)
+];</pre>
+      </div>
+        <div class="row-bottom stagger">
+          <div class="callout callout--info"><svg class="ico"><use href="#i-file"/></svg><div>File: <code>lib/data/demo_products.dart</code></div></div>
+          <div class="callout callout--info"><svg class="ico"><use href="#i-info"/></svg><div>Needs <code>import 'package:flutter/material.dart';</code> (for <code>Icons</code>) and the model</div></div>
+        </div>
+      </div>
+      <div class="ph-col"><span class="badge">Preview · Step 9</span>
+      <div class="ph ph--teal" style="--pw:13.5cqw;">
+        <div class="ph__scr"><div class="ph__island"></div>
+          <div class="appbar"><span class="ab-title">Souq Tripoli</span><span class="ab-ico"><svg class="ico"><use href="#i-moon"/></svg></span><span class="ab-ico"><svg class="ico"><use href="#i-cart"/></svg></span></div><div class="m-grid"><div class="m-prod is-tag" data-tag="demoProducts[0]"><div class="pic"><svg class="ico"><use href="#i-lotus"/></svg></div><b>Dates</b><span class="ar" lang="ar">تمر</span><div class="pr"><span>15.00 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-hive"/></svg></div><b>Honey</b><span class="ar" lang="ar">عسل</span><div class="pr"><span>45.00 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-tea"/></svg></div><b>Green tea</b><span class="ar" lang="ar">شاي أخضر</span><div class="pr"><span>8.50 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-coffee"/></svg></div><b>Arabic coffee</b><span class="ar" lang="ar">قهوة عربية</span><div class="pr"><span>22.00 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-croissant"/></svg></div><b>Bread</b><span class="ar" lang="ar">خبز</span><div class="pr"><span>1.50 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-bowl"/></svg></div><b>Couscous</b><span class="ar" lang="ar">كسكسي</span><div class="pr"><span>7.00 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div></div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Paste the six products from the complete example rather than typing them live. Ask a student to read the Arabic names aloud. The phone is a preview: in Step 9 these six products fill the grid.</p></aside>
+</section>
+
+<!-- 07 · Step 3 CartProvider -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Build along · CartProvider 1 of 3</p>
+      <h2 class="title">Step 3: <code>CartProvider</code>: a private list, read-only getters</h2>
+    </header>
+    <div class="body walk" style="grid-template-columns: 1.6fr 1fr;">
+      <div class="term code">
+        <div class="term__bar"><i></i><i></i><i></i><span>lib/providers/cart_provider.dart</span><span class="grow"></span><span>part 1</span></div>
+<pre class="hl" data-hl="2,5,10">class CartProvider extends ChangeNotifier {
+  final List&lt;Product&gt; _items = []; // private: only this class changes it
+
+  // Read-only copy for the UI. cart.items.add(...) would throw an error.
+  List&lt;Product&gt; get items =&gt; List.unmodifiable(_items);
+
+  int get count =&gt; _items.length;
+
+  bool contains(Product product) {
+    return _items.any((item) =&gt; item.id == product.id);
+  }</pre>
+      </div>
+      <div class="explain stagger">
+        <div class="defs"><div class="def"><code>_items</code><span>is <b>private</b>: only this class changes it</span></div><div class="def"><code>items</code><span>what widgets get: a <b>read-only copy</b></span></div></div>
+        <div class="term">
+          <div class="term__bar"><i></i><i></i><i></i><span>Debug Console</span></div>
+<pre style="font-size:1cqw;"><span class="t-dim">cart.items.add(p);</span>
+<span class="t-bad">Unsupported operation: Cannot add to an unmodifiable list</span></pre>
+        </div>
+        <div class="callout callout--ok"><svg class="ico"><use href="#i-check-circle"/></svg><div>So every change must use <b>our methods</b>, and we never forget <code>notifyListeners()</code></div></div>
+        <div class="defs"><div class="def"><code>any(...)</code><span>asks: “is there <b>any</b> item with this id?”</span></div></div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Try <code>cart.items.add(...)</code> live to show the error, then delete the line. We compare by <code>id</code> because ids are how real apps (and the APIs in Lecture 18) identify things.</p></aside>
+</section>
+
+<!-- 08 · Step 4 change the cart -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Build along · CartProvider 2 of 3</p>
+      <h2 class="title">Step 4: changing the cart</h2>
+    </header>
+    <div class="body walk">
+      <div class="term code">
+        <div class="term__bar"><i></i><i></i><i></i><span>lib/providers/cart_provider.dart</span><span class="grow"></span><span>inside CartProvider</span></div>
+<pre class="hl" data-groups="3,8,13:g1;4,9,14:g3;2:g2">void add(Product product) {
+  if (contains(product)) return; // each product only once
+  _items.add(product);
+  notifyListeners();
+}
+
+void remove(Product product) {
+  _items.removeWhere((item) =&gt; item.id == product.id);
+  notifyListeners();
+}
+
+void clear() {
+  _items.clear();
+  notifyListeners();
+}</pre>
+      </div>
+      <div class="explain">
+        <div class="legend-groups stagger">
+          <div class="lg" style="--c:#13B9FD;"><span class="n">1</span><b>Change the private list</b><span><code>removeWhere</code> removes every item that matches the test</span></div>
+          <div class="lg" style="--c:#4ADE80;"><span class="n">2</span><b>Then <code>notifyListeners()</code></b><span>every method does both, in this order</span></div>
+          <div class="lg" style="--c:#FFC857;"><span class="n">3</span><b>The rule lives here</b><span>“each product only once” is not in a button</span></div>
+        </div>
+        <table class="tbl tbl--tight" style="font-size:1.12cqw;">
+          <thead><tr><th>Call</th><th><code>_items</code></th><th><code>count</code></th></tr></thead>
+          <tbody>
+            <tr><td><code>add(dates)</code></td><td>[Dates]</td><td>1</td></tr>
+            <tr><td><code>add(honey)</code></td><td>[Dates, Honey]</td><td>2</td></tr>
+            <tr><td><code>add(dates)</code></td><td>[Dates, Honey] <span class="muted">already in</span></td><td>2</td></tr>
+            <tr><td><code>remove(dates)</code></td><td>[Honey]</td><td>1</td></tr>
+            <tr><td><code>clear()</code></td><td>[ ]</td><td>0</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p><code>removeWhere</code> removes every item that matches the test. Quantities (2 × Dates) are a homework exercise.</p></aside>
+</section>
+
+<!-- 09 · Step 5 toggle and total -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Build along · CartProvider 3 of 3</p>
+      <h2 class="title">Step 5: toggle and the total</h2>
+    </header>
+    <div class="body walk" style="grid-template-columns: .74fr 1.26fr;">
+      <div class="term code code--lg">
+        <div class="term__bar"><i></i><i></i><i></i><span>lib/providers/cart_provider.dart</span><span class="grow"></span><span>inside CartProvider</span></div>
+<pre class="hl" data-groups="1-7:g1;9-15:g3">void toggle(Product product) {
+  if (contains(product)) {
+    remove(product);
+  } else {
+    add(product);
+  }
+}
+
+double get totalPrice {
+  double total = 0;
+  for (final product in _items) {
+    total += product.price;
+  }
+  return total;
+}</pre>
+      </div>
+      <div class="explain">
+        <div class="legend-groups stagger">
+          <div class="lg" style="--c:#13B9FD;"><span class="n">1</span><b><code>toggle</code></b><span>one method for an “Add / Remove” button</span></div>
+          <div class="lg" style="--c:#4ADE80;"><span class="n">2</span><b><code>totalPrice</code> is a computed value</b><span>never stored, always calculated from the list, so it can never be wrong</span></div>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.2cqw; align-items:start;">
+          <table class="tbl" style="font-size:1.2cqw;">
+            <thead><tr><th>In <code>_items</code></th><th>price</th></tr></thead>
+            <tbody>
+              <tr><td>Dates</td><td>15.0</td></tr>
+              <tr><td>Honey</td><td>45.0</td></tr>
+              <tr><td>Green tea</td><td>8.5</td></tr>
+              <tr><td><code>totalPrice</code></td><td><b>68.5</b></td></tr>
+            </tbody>
+          </table>
+          <div class="side stagger">
+            <div class="callout callout--info"><svg class="ico"><use href="#i-info"/></svg><div><code>toggle</code> does not call <code>notifyListeners()</code> itself: <code>add</code> and <code>remove</code> already do</div></div>
+            <div class="callout callout--ok"><svg class="ico"><use href="#i-check-circle"/></svg><div>The provider is <b>finished</b>: about 50 lines of plain Dart, no widgets</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p><code>toggle</code> does not call <code>notifyListeners()</code> itself: <code>add</code> and <code>remove</code> already do. The provider is now finished: about 50 lines of plain Dart and no widgets. The table: with Dates, Honey and Green tea in the cart, <code>totalPrice</code> is 68.5 (shown as “68.50 LYD” in Step 12).</p></aside>
+</section>
+
+<!-- 10 · Step 6 main.dart -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Build along · Wire it up</p>
+      <h2 class="title">Step 6: <code>main.dart</code> with two providers</h2>
+    </header>
+    <div class="body walk" style="grid-template-columns: auto 1fr;">
+      <div class="term code code--sm">
+        <div class="term__bar"><i></i><i></i><i></i><span>lib/main.dart</span></div>
+<pre class="hl" data-hl="3-6">void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) =&gt; CartProvider()),
+        ChangeNotifierProvider(create: (context) =&gt; ThemeProvider()),
+      ],
+      child: const SouqApp(),
+    ),
+  );
+}</pre>
+      </div>
+      <div class="explain stagger">
+        <div class="wt" style="margin-bottom:.4cqw;">
+          <ul><li><span class="nd nd--hl">MultiProvider<small>CartProvider + ThemeProvider</small></span>
+            <ul><li><span class="nd">SouqApp → MaterialApp<small>watches ThemeProvider</small></span>
+              <ul>
+                <li><span class="nd" style="font-size:1cqw;">ProductsScreen</span></li>
+                <li><span class="nd" style="font-size:1cqw;">ProductDetailsScreen</span></li>
+                <li><span class="nd" style="font-size:1cqw;">CartScreen</span></li>
+              </ul>
+            </li></ul>
+          </li></ul>
+        </div>
+        <div class="defs"><div class="def"><code>CartProvider</code><span>the shop data</span></div><div class="def"><code>ThemeProvider</code><span>dark mode (from Lecture 16)</span></div></div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-palette"/></svg><div><code>SouqApp</code> watches <code>ThemeProvider</code> for <code>themeMode</code>, exactly like Lecture 16, with <code>theme: buildTheme(Brightness.light)</code>, <code>darkTheme: buildTheme(Brightness.dark)</code> (Lecture 10) and <code>home: const ProductsScreen()</code></div></div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Both providers sit above <code>MaterialApp</code>, so every screen we push can use them. The full <code>SouqApp</code> class is in the complete example.</p></aside>
+</section>
+
+<!-- 11 · Step 7 CartBadge -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Build along · Widgets 1 of 2</p>
+      <h2 class="title">Step 7: the <code>CartBadge</code> widget</h2>
+    </header>
+    <div class="body" style="grid-template-columns: auto 1fr auto; gap: 2cqw; align-items:start;">
+      <div class="term code">
+        <div class="term__bar"><i></i><i></i><i></i><span>lib/widgets/cart_badge.dart</span><span class="grow"></span><span>build()</span></div>
+<pre class="hl" data-hl="1,10-12">final count = context.watch&lt;CartProvider&gt;().count;
+
+return IconButton(
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) =&gt; const CartScreen()),
+    );
+  },
+  icon: Badge.count(
+    count: count,
+    isLabelVisible: count &gt; 0,
+    child: const Icon(Icons.shopping_cart),
+  ),
+);</pre>
+      </div>
+      <div class="explain stagger">
+        <div class="say"><p>Written once in <code>lib/widgets/<wbr>cart_badge.dart</code>, used on <b>two screens</b>.</p><p>It watches only <code>count</code>, and opens the cart when tapped.</p></div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-info"/></svg><div><code>isLabelVisible: count &gt; 0</code>: no red number while the cart is empty</div></div>
+        <div class="callout callout--ok"><svg class="ico"><use href="#i-check-circle"/></svg><div>Compare with Lecture 15: no <code>count</code> parameter, no callback. The badge finds the cart <b>by itself</b>.</div></div>
+      </div>
+      <div class="ph ph--teal" style="--pw:13.5cqw;">
+        <div class="ph__scr"><div class="ph__island"></div>
+          <div class="appbar"><span class="ab-title">Souq Tripoli</span><span class="ab-ico"><svg class="ico"><use href="#i-moon"/></svg></span><span class="ab-ico is-tag" data-tag="CartBadge"><svg class="ico"><use href="#i-cart"/></svg><i class="m-badge">2</i></span></div><div class="m-grid"><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-lotus"/></svg></div><b>Dates</b><span class="ar" lang="ar">تمر</span><div class="pr"><span>15.00 LYD</span><svg class="ico"><use href="#i-cart-off"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-hive"/></svg></div><b>Honey</b><span class="ar" lang="ar">عسل</span><div class="pr"><span>45.00 LYD</span><svg class="ico"><use href="#i-cart-off"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-tea"/></svg></div><b>Green tea</b><span class="ar" lang="ar">شاي أخضر</span><div class="pr"><span>8.50 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-coffee"/></svg></div><b>Arabic coffee</b><span class="ar" lang="ar">قهوة عربية</span><div class="pr"><span>22.00 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-croissant"/></svg></div><b>Bread</b><span class="ar" lang="ar">خبز</span><div class="pr"><span>1.50 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-bowl"/></svg></div><b>Couscous</b><span class="ar" lang="ar">كسكسي</span><div class="pr"><span>7.00 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div></div>
+        </div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Compare with Lecture 15: no <code>count</code> parameter, no callback. The badge finds the cart by itself.</p></aside>
+</section>
+
+<!-- 12 · Step 8 ProductCard -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Build along · Widgets 2 of 2</p>
+      <h2 class="title">Step 8: the <code>ProductCard</code> widget</h2>
+    </header>
+    <div class="body" style="grid-template-columns: auto 1fr auto; gap: 2cqw; align-items:start;">
+      <div class="term code">
+        <div class="term__bar"><i></i><i></i><i></i><span>lib/widgets/product_card.dart</span><span class="grow"></span><span>build()</span></div>
+<pre class="hl" data-hl="1,6,9-11">final inCart = context.watch&lt;CartProvider&gt;().contains(product);
+// ... Card &gt; InkWell (tap → ProductDetailsScreen) &gt; Column with
+// icon, name, Arabic name, price, and this button:
+IconButton(
+  onPressed: () {
+    context.read&lt;CartProvider&gt;().toggle(product);
+  },
+  icon: Icon(
+    inCart
+        ? Icons.remove_shopping_cart
+        : Icons.add_shopping_cart,
+  ),
+),</pre>
+      </div>
+      <div class="explain stagger">
+        <div class="say"><p>The card gets its <code>product</code> through the constructor (Lecture 09).</p><p>The button only <b>asks</b> the provider to toggle; no logic here.</p></div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-bulb"/></svg><div><code>inCart</code> only decides which icon to show. That is a UI decision, so it is fine in the widget.</div></div>
+      </div>
+      <div class="ph ph--teal" style="--pw:13.5cqw;">
+        <div class="ph__scr"><div class="ph__island"></div>
+          <div class="appbar"><span class="ab-title">Souq Tripoli</span><span class="ab-ico"><svg class="ico"><use href="#i-moon"/></svg></span><span class="ab-ico"><svg class="ico"><use href="#i-cart"/></svg><i class="m-badge">2</i></span></div><div class="m-grid"><div class="m-prod is-tag" data-tag="ProductCard"><div class="pic"><svg class="ico"><use href="#i-lotus"/></svg></div><b>Dates</b><span class="ar" lang="ar">تمر</span><div class="pr"><span>15.00 LYD</span><svg class="ico"><use href="#i-cart-off"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-hive"/></svg></div><b>Honey</b><span class="ar" lang="ar">عسل</span><div class="pr"><span>45.00 LYD</span><svg class="ico"><use href="#i-cart-off"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-tea"/></svg></div><b>Green tea</b><span class="ar" lang="ar">شاي أخضر</span><div class="pr"><span>8.50 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-coffee"/></svg></div><b>Arabic coffee</b><span class="ar" lang="ar">قهوة عربية</span><div class="pr"><span>22.00 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-croissant"/></svg></div><b>Bread</b><span class="ar" lang="ar">خبز</span><div class="pr"><span>1.50 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-bowl"/></svg></div><b>Couscous</b><span class="ar" lang="ar">كسكسي</span><div class="pr"><span>7.00 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div></div>
+        </div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p><code>inCart</code> decides only which icon to show. That is a UI decision, so it is fine in the widget.</p></aside>
+</section>
+
+<!-- 13 · Step 9 products screen -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Build along · Screens 1 of 3</p>
+      <h2 class="title">Step 9: the products screen</h2>
+    </header>
+    <div class="body" style="grid-template-columns: auto 1fr auto; gap: 2cqw; align-items:start;">
+      <div class="term code">
+        <div class="term__bar"><i></i><i></i><i></i><span>lib/screens/products_screen.dart</span><span class="grow"></span><span>inside Scaffold</span></div>
+<pre class="hl" data-hl="1,4,9,11">body: GridView.builder(
+  padding: const EdgeInsets.all(12),
+  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 2,
+    mainAxisSpacing: 12,
+    crossAxisSpacing: 12,
+    childAspectRatio: 0.8,
+  ),
+  itemCount: demoProducts.length,
+  itemBuilder: (context, index) {
+    return ProductCard(product: demoProducts[index]);
+  },
+),</pre>
+      </div>
+      <div class="explain stagger">
+        <div class="say"><p>AppBar: <code>actions: const [ThemeButton(), CartBadge()]</code>, two reusable widgets.</p><p><code>GridView.builder</code> from Lecture 14.</p></div>
+        <div class="callout callout--ok"><svg class="ico"><use href="#i-play"/></svg><div>Run it: tap add-to-cart on two cards. The icons change and the badge shows <b>2</b>.</div></div>
+        <div class="callout callout--warn"><svg class="ico"><use href="#i-alert"/></svg><div>To run now, make placeholder <code>CartScreen</code> and <code>ProductDetailsScreen</code> classes first.</div></div>
+      </div>
+      <div class="ph ph--teal" style="--pw:13.5cqw;">
+        <div class="ph__scr"><div class="ph__island"></div>
+          <div class="appbar"><span class="ab-title">Souq Tripoli</span><span class="ab-ico"><svg class="ico"><use href="#i-moon"/></svg></span><span class="ab-ico"><svg class="ico"><use href="#i-cart"/></svg><i class="m-badge">2</i></span></div><div class="m-grid is-tag" data-tag="GridView.builder"><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-lotus"/></svg></div><b>Dates</b><span class="ar" lang="ar">تمر</span><div class="pr"><span>15.00 LYD</span><svg class="ico"><use href="#i-cart-off"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-hive"/></svg></div><b>Honey</b><span class="ar" lang="ar">عسل</span><div class="pr"><span>45.00 LYD</span><svg class="ico"><use href="#i-cart-off"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-tea"/></svg></div><b>Green tea</b><span class="ar" lang="ar">شاي أخضر</span><div class="pr"><span>8.50 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-coffee"/></svg></div><b>Arabic coffee</b><span class="ar" lang="ar">قهوة عربية</span><div class="pr"><span>22.00 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-croissant"/></svg></div><b>Bread</b><span class="ar" lang="ar">خبز</span><div class="pr"><span>1.50 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-bowl"/></svg></div><b>Couscous</b><span class="ar" lang="ar">كسكسي</span><div class="pr"><span>7.00 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div></div>
+        </div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Run the app now. Tap add-to-cart on two cards: the icons change and the badge shows 2. To run before steps 10–12, the imported screens must exist: create a placeholder <code>CartScreen</code> that returns <code>const Scaffold()</code>, and a placeholder <code>ProductDetailsScreen</code> with <code>required this.product</code> and <code>final Product product;</code>. We fill them in next.</p></aside>
+</section>
+
+<!-- 14 · Step 10 details screen -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Build along · Screens 2 of 3</p>
+      <h2 class="title">Step 10: the details screen</h2>
+    </header>
+    <div class="body" style="grid-template-columns: 1fr auto auto; gap: 2cqw; align-items:start;">
+      <div class="side">
+        <div class="term code code--sm">
+        <div class="term__bar"><i></i><i></i><i></i><span>lib/screens/product_details_screen.dart</span><span class="grow"></span><span>build()</span></div>
+<pre class="hl" data-hl="1,5,8-9,11">final inCart = context.watch&lt;CartProvider&gt;().contains(product);
+// ...
+appBar: AppBar(title: Text(product.name), actions: const [CartBadge()]),
+// body: ListView with the icon, names, price and description
+bottomNavigationBar: SafeArea(
+  child: Padding(
+    padding: const EdgeInsets.all(16),
+    child: AppButton(
+      text: inCart ? 'Remove from cart' : 'Add to cart',
+      onPressed: () {
+        context.read&lt;CartProvider&gt;().toggle(product);
+      },
+    ),
+  ),
+),</pre>
+      </div>
+        <div class="stagger" style="display:grid; grid-template-columns: 1fr 1fr; gap:1.2cqw;">
+          <div class="callout callout--info"><svg class="ico"><use href="#i-copy"/></svg><div>Our <code>AppButton</code> from Lecture 08, reused</div></div>
+          <div class="callout callout--info"><svg class="ico"><use href="#i-info"/></svg><div><code>bottomNavigationBar</code> keeps the button at the bottom of the screen</div></div>
+        </div>
+      </div>
+      <div class="ph-col"><span class="badge">Tap “Add to cart”</span>
+      <div class="ph ph--teal" style="--pw:13.5cqw;">
+        <div class="ph__scr"><div class="ph__island"></div>
+          <div class="appbar"><span class="ab-ico"><svg class="ico"><use href="#i-back"/></svg></span><span class="ab-title">Green tea</span><span class="ab-ico"><svg class="ico"><use href="#i-cart"/></svg><i class="m-badge">3</i></span></div><div class="m-detail"><div class="pic"><svg class="ico"><use href="#i-tea"/></svg></div><div class="h1">Green tea</div><div class="h2" lang="ar">شاي أخضر</div><div class="h3">8.50 LYD</div><p >Green tea for a strong Libyan tea with mint.</p></div><div class="m-foot"><div class="m-btn m-btn--pri is-wide is-tag" data-tag="AppButton">Remove from cart</div></div>
+        </div>
+      </div>
+      </div>
+      <div class="ph-col"><span class="badge badge--ok">Go back: already updated</span>
+      <div class="ph ph--teal" style="--pw:13.5cqw;">
+        <div class="ph__scr"><div class="ph__island"></div>
+          <div class="appbar"><span class="ab-title">Souq Tripoli</span><span class="ab-ico"><svg class="ico"><use href="#i-moon"/></svg></span><span class="ab-ico"><svg class="ico"><use href="#i-cart"/></svg><i class="m-badge">3</i></span></div><div class="m-grid"><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-lotus"/></svg></div><b>Dates</b><span class="ar" lang="ar">تمر</span><div class="pr"><span>15.00 LYD</span><svg class="ico"><use href="#i-cart-off"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-hive"/></svg></div><b>Honey</b><span class="ar" lang="ar">عسل</span><div class="pr"><span>45.00 LYD</span><svg class="ico"><use href="#i-cart-off"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-tea"/></svg></div><b>Green tea</b><span class="ar" lang="ar">شاي أخضر</span><div class="pr"><span>8.50 LYD</span><svg class="ico"><use href="#i-cart-off"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-coffee"/></svg></div><b>Arabic coffee</b><span class="ar" lang="ar">قهوة عربية</span><div class="pr"><span>22.00 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-croissant"/></svg></div><b>Bread</b><span class="ar" lang="ar">خبز</span><div class="pr"><span>1.50 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div><div class="m-prod"><div class="pic"><svg class="ico"><use href="#i-bowl"/></svg></div><b>Couscous</b><span class="ar" lang="ar">كسكسي</span><div class="pr"><span>7.00 LYD</span><svg class="ico"><use href="#i-cart-plus"/></svg></div></div></div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Tap Add on the details page, then go back: the card on the grid already shows the “remove” icon. No <code>pop</code> result, no callback.</p></aside>
+</section>
+
+<!-- 15 · Step 11 cart list -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Build along · Screens 3 of 3</p>
+      <h2 class="title">Step 11: the cart screen list</h2>
+    </header>
+    <div class="body" style="grid-template-columns: auto 1fr auto; gap: 2cqw; align-items:start;">
+      <div class="term code">
+        <div class="term__bar"><i></i><i></i><i></i><span>lib/screens/cart_screen.dart</span><span class="grow"></span><span>build()</span></div>
+<pre class="hl" data-groups="1-2:g1;3-5:g2">final cart = context.watch&lt;CartProvider&gt;();
+final items = cart.items;
+body: items.isEmpty
+    ? const Center(child: Text('Your cart is empty'))
+    : ListView.builder(
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          final product = items[index];
+          return ListTile(
+            leading: Icon(product.icon),
+            title: Text(product.name),
+            // subtitle: price; trailing: delete IconButton
+          );
+        },
+      ),</pre>
+      </div>
+      <div class="explain">
+        <div class="legend-groups stagger">
+          <div class="lg" style="--c:#13B9FD;"><span class="n">1</span><b>Top of <code>build()</code></b><span>the first two lines; <code>body:</code> is inside the <code>Scaffold</code></span></div>
+          <div class="lg" style="--c:#FFC857;"><span class="n">2</span><b><code>condition ? a : b</code></b><span>a message when empty, otherwise the list</span></div>
+        </div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-trash"/></svg><div>The delete button calls <code>context.read&lt;CartProvider&gt;()<wbr>.remove(product)</code></div></div>
+        <div class="callout callout--ok"><svg class="ico"><use href="#i-bulb"/></svg><div>Read <code>cart.items</code> once into <code>items</code>: the getter makes a new copy each time</div></div>
+      </div>
+      <div class="ph ph--teal" style="--pw:13.5cqw;">
+        <div class="ph__scr"><div class="ph__island"></div>
+          <div class="appbar"><span class="ab-ico"><svg class="ico"><use href="#i-back"/></svg></span><span class="ab-title">My Cart (3)</span></div><div class="m-list is-tag" data-tag="ListView.builder"><div class="m-tile"><svg class="ico"><use href="#i-lotus"/></svg><div class="t">Dates<small>15.00 LYD</small></div><span class="ab-ico"><svg class="ico"><use href="#i-trash"/></svg></span></div><div class="m-tile"><svg class="ico"><use href="#i-hive"/></svg><div class="t">Honey<small>45.00 LYD</small></div><span class="ab-ico"><svg class="ico"><use href="#i-trash"/></svg></span></div><div class="m-tile"><svg class="ico"><use href="#i-tea"/></svg><div class="t">Green tea<small>8.50 LYD</small></div><span class="ab-ico"><svg class="ico"><use href="#i-trash"/></svg></span></div></div>
+        </div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>We read <code>cart.items</code> once into <code>items</code>, because the getter makes a new copy each time it is called.</p></aside>
+</section>
+
+<!-- 16 · Step 12 total and clear -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Build along · Finish the cart</p>
+      <h2 class="title">Step 12: total, clear, and the full test run</h2>
+    </header>
+    <div class="body" style="grid-template-columns: 1fr auto auto; gap: 2cqw; align-items:start;">
+      <div class="side">
+        <div class="term code">
+        <div class="term__bar"><i></i><i></i><i></i><span>lib/screens/cart_screen.dart</span><span class="grow"></span><span>clear + total</span></div>
+<pre class="hl" data-hl="2-3,5,10">// AppBar action: Clear (disabled while the cart is empty)
+onPressed: items.isEmpty
+    ? null
+    : () {
+        context.read&lt;CartProvider&gt;().clear();
+      },
+
+// bottomNavigationBar: Row(Text('Total'), Spacer(), this Text)
+Text(
+  '${cart.totalPrice.toStringAsFixed(2)} LYD',
+  style: const TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+  ),
+),</pre>
+      </div>
+        <div class="stagger" style="display:grid; grid-template-columns: 1fr 1fr; gap:1.2cqw;">
+          <div class="callout callout--info"><svg class="ico"><use href="#i-x"/></svg><div><code>onPressed: null</code> disables a button</div></div>
+          <div class="callout callout--info"><svg class="ico"><use href="#i-info"/></svg><div><code>toStringAsFixed(2)</code>: always two decimals, 68.5 → “68.50”</div></div>
+        </div>
+      </div>
+      <div class="ph-col"><span class="badge">3 items</span>
+      <div class="ph ph--teal" style="--pw:13.5cqw;">
+        <div class="ph__scr"><div class="ph__island"></div>
+          <div class="appbar"><span class="ab-ico"><svg class="ico"><use href="#i-back"/></svg></span><span class="ab-title">My Cart (3)</span><span class="ab-ico"><svg class="ico"><use href="#i-sweep"/></svg></span></div><div class="m-list"><div class="m-tile"><svg class="ico"><use href="#i-lotus"/></svg><div class="t">Dates<small>15.00 LYD</small></div><span class="ab-ico"><svg class="ico"><use href="#i-trash"/></svg></span></div><div class="m-tile"><svg class="ico"><use href="#i-hive"/></svg><div class="t">Honey<small>45.00 LYD</small></div><span class="ab-ico"><svg class="ico"><use href="#i-trash"/></svg></span></div><div class="m-tile"><svg class="ico"><use href="#i-tea"/></svg><div class="t">Green tea<small>8.50 LYD</small></div><span class="ab-ico"><svg class="ico"><use href="#i-trash"/></svg></span></div></div><div class="m-total"><span>Total</span><b>68.50 LYD</b></div>
+        </div>
+      </div>
+      </div>
+      <div class="ph-col"><span class="badge badge--warm">After Clear</span>
+      <div class="ph ph--teal" style="--pw:13.5cqw;">
+        <div class="ph__scr"><div class="ph__island"></div>
+          <div class="appbar"><span class="ab-ico"><svg class="ico"><use href="#i-back"/></svg></span><span class="ab-title">My Cart (0)</span><span class="ab-ico is-off"><svg class="ico"><use href="#i-sweep"/></svg></span></div><div class="m-empty">Your cart is empty</div><div class="m-total"><span>Total</span><b>0.00 LYD</b></div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Full run (Practical example 4): add Dates and Honey from the grid, add Green tea from its details page, open the cart: “My Cart (3)”, total 68.50 LYD. Delete Dates: 53.50 LYD. Clear: “Your cart is empty”, 0.00 LYD. Go back: every button and badge already agrees. This is “the UI updates automatically”.</p></aside>
+</section>
+
+<!-- 17 · Logic vs UI -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Big idea</p>
+      <h2 class="title">Separating business logic from UI</h2>
+    </header>
+    <div class="body" style="grid-template-rows: auto auto; align-content:start; gap: 1.6cqw;">
+      <table class="tbl tbl--split">
+        <thead><tr><th><svg class="ico"><use href="#i-cart"/></svg>In the provider (business logic)</th><th><svg class="ico"><use href="#i-phone"/></svg>In widgets (UI)</th></tr></thead>
+        <tbody>
+          <tr><td>What is in the cart</td><td>How a product looks (<code>Card</code>, <code>Icon</code>, <code>Text</code>)</td></tr>
+          <tr><td>Rules: each product once, add, remove, clear</td><td>Which icon or button text to show</td></tr>
+          <tr><td>The total price</td><td>Showing it with <code>toStringAsFixed(2)</code> and “LYD”</td></tr>
+          <tr><td><code>notifyListeners()</code></td><td><code>context.read&lt;CartProvider&gt;().toggle(product)</code></td></tr>
+          <tr><td>No <code>BuildContext</code>, no widgets</td><td>Navigation (<code>Navigator.push</code>)</td></tr>
+        </tbody>
+      </table>
+      <div class="stagger" style="display:grid; grid-template-columns: 1fr 1fr 1.2fr; gap:1.4cqw;">
+        <div class="callout callout--warn"><svg class="ico"><use href="#i-x"/></svg><div><b>Bad:</b> a <code>for</code> loop in <code>CartScreen</code> that adds up prices</div></div>
+        <div class="callout callout--ok"><svg class="ico"><use href="#i-check-circle"/></svg><div><b>Good:</b> <code>cart.totalPrice</code></div></div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-bulb"/></svg><div>Could you explain it to a shop owner without the screen? Then it goes in the <b>provider</b>.</div></div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Rule of thumb: if you could explain it to a shop owner without mentioning the screen (“the total is the sum of the prices”), it belongs in the provider.</p></aside>
+</section>
+
+<!-- 18 · Bonus test -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Bonus · flutter test</p>
+      <h2 class="title">Bonus: test the cart without a phone</h2>
+    </header>
+    <div class="body walk">
+      <div class="term code">
+        <div class="term__bar"><i></i><i></i><i></i><span>test/cart_provider_test.dart</span></div>
+<pre class="hl" data-hl="7-12">import 'package:flutter_test/flutter_test.dart';
+
+import 'package:souq_tripoli/data/demo_products.dart';
+import 'package:souq_tripoli/providers/cart_provider.dart';
+
+void main() {
+  test('total price adds up', () {
+    final cart = CartProvider();
+    cart.add(demoProducts[0]); // Dates: 15.0
+    cart.add(demoProducts[1]); // Honey: 45.0
+    expect(cart.count, 2);
+    expect(cart.totalPrice, 60.0);
+  });
+}</pre>
+      </div>
+      <div class="explain stagger">
+        <div class="term">
+          <div class="term__bar"><i></i><i></i><i></i><span>Terminal</span></div>
+<pre><span class="t-p">$</span> flutter test
+<span class="t-ok">00:02 +1: All tests passed!</span></pre>
+        </div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-file"/></svg><div>File: <code>test/cart_provider_test.dart</code>; run <code>flutter test</code> → “All tests passed!”</div></div>
+        <div class="callout callout--ok"><svg class="ico"><use href="#i-flask"/></svg><div>Remember Lecture 15’s “hard to test”? Logic in a plain class is <b>easy</b> to test.</div></div>
+        <div class="callout callout--warn"><svg class="ico"><use href="#i-alert"/></svg><div>Change <code>60.0</code> to <code>61.0</code>: it fails with <code>Expected: &lt;61.0&gt; Actual: &lt;60.0&gt;</code></div></div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-package"/></svg><div><code>souq_tripoli</code> is the <code>name:</code> in your <code>pubspec.yaml</code></div></div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p><code>souq_tripoli</code> is the <code>name:</code> in <code>pubspec.yaml</code>; use your own app’s name. <code>expect(actual, expected)</code> checks a value; change 60.0 to 61.0 to see a failing test. The complete example has a second test for <code>toggle</code>.</p></aside>
+</section>
+
+<!-- 19 · Summary -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Wrap-up</p>
+      <h2 class="title">Summary</h2>
+    </header>
+    <div class="body wrap">
+      <article class="card card--hl">
+        <h3>Today you learned</h3>
+        <ul class="checklist stagger">
+          <li><span>Model = <code>final</code> data; provider = private list + methods + computed values</span></li>
+          <li><span><code>List.unmodifiable</code>: the UI can read, only the provider can change</span></li>
+          <li><span><code>MultiProvider</code> above <code>MaterialApp</code>: cart and theme for every screen</span></li>
+          <li><span><b>Watch</b> to show, <b>read</b> to change; every watcher updates by itself</span></li>
+          <li><span>Folders: models, data, providers, screens, widgets</span></li>
+        </ul>
+      </article>
+      <div class="side stagger">
+        <div class="callout callout--info"><svg class="ico"><use href="#i-folder"/></svg><div>Think: where would a new <code>FavoritesProvider</code> and a <code>FavoritesScreen</code> go?</div></div>
+        <div class="card next"><h4>Coming up</h4><p>Lectures 18–19: the products come from the internet</p></div>
+        <div class="qa__big grad-text" style="font-size:4.6cqw;">Questions?</div>
+      </div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Open the folder tree in VS Code and ask students where they would put a new <code>FavoritesProvider</code> and a <code>FavoritesScreen</code>. That is homework 2.</p></aside>
+</section>
+
+<!-- 20 · Homework -->
+<section class="slide">
+  <div class="canvas"><div class="frame">
+    <header class="head">
+      <p class="kicker">Homework</p>
+      <h2 class="title">Homework</h2>
+    </header>
+    <div class="body stagger" style="grid-template-columns: repeat(3, 1fr); align-content:start; gap:1.5cqw;">
+      <article class="card" style="display:grid; gap:.8cqw; align-content:start;"><div style="display:flex; align-items:center; justify-content:space-between;"><span class="itile"><svg class="ico"><use href="#i-check-circle"/></svg></span><span class="badge badge--ok">easy</span></div><h3>1 · Checkout button</h3><p style="font-size:1.2cqw; line-height:1.45;">A “Checkout” <code>AppButton</code> shows a SnackBar with the real total, then clears the cart.</p></article>
+      <article class="card" style="display:grid; gap:.8cqw; align-content:start;"><div style="display:flex; align-items:center; justify-content:space-between;"><span class="itile"><svg class="ico"><use href="#i-heart"/></svg></span><span class="badge ">medium</span></div><h3>2 · Favorites</h3><p style="font-size:1.2cqw; line-height:1.45;">A third provider: a heart on every card and a Favorites screen.</p></article>
+      <article class="card" style="display:grid; gap:.8cqw; align-content:start;"><div style="display:flex; align-items:center; justify-content:space-between;"><span class="itile"><svg class="ico"><use href="#i-plus"/></svg></span><span class="badge badge--warm">medium–hard</span></div><h3>3 · Quantity + / −</h3><p style="font-size:1.2cqw; line-height:1.45;">A <code>CartItem</code> model with a quantity, and “−&nbsp;2&nbsp;+” on each cart row.</p></article>
+      <article class="card" style="display:grid; gap:.8cqw; align-content:start;"><div style="display:flex; align-items:center; justify-content:space-between;"><span class="itile"><svg class="ico"><use href="#i-filter"/></svg></span><span class="badge ">medium</span></div><h3>4 · Filter by category</h3><p style="font-size:1.2cqw; line-height:1.45;"><code>ChoiceChip</code>s “All”, “Food”, “Drinks” above the grid.</p></article>
+      <article class="card" style="display:grid; gap:.8cqw; align-content:start;"><div style="display:flex; align-items:center; justify-content:space-between;"><span class="itile"><svg class="ico"><use href="#i-search"/></svg></span><span class="badge badge--warm">harder</span></div><h3>5 · Search</h3><p style="font-size:1.2cqw; line-height:1.45;">A <code>TextField</code> that matches the English or Arabic name: “tea” or “<bdi lang="ar">شاي</bdi>”.</p></article>
+      <div style="display:grid; align-content:center;"><div class="callout callout--info"><svg class="ico"><use href="#i-bulb"/></svg><div>4 and 5: the chosen category and the search text are <b>local</b> state, so <code>setState</code> is the right tool.</div></div></div>
+    </div>
+    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+  </div></div>
+  <aside class="notes"><p>Exercises 4 and 5 are a good check of Lecture 15: the selected category and the search text are <b>local</b> state, so <code>setState</code> is the right tool there. Full details are in the Homework section of the plan.</p></aside>
+</section>
+
+</main>
+
+<div class="notes-panel" hidden>
+  <h4 class="np-title">Speaker notes</h4>
+  <div class="np-body"></div>
+</div>
+<div class="hint" aria-hidden="true"><kbd>←</kbd> <kbd>→</kbd> navigate · <kbd>F</kbd> fullscreen · <kbd>N</kbd> notes · <kbd>T</kbd> theme</div>
+
+<script src="js/deck.js"></script>
+</body>
+</html>
