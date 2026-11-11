@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Lecture 17 · A Practical Provider App</title>
-  <meta name="description" content="Mobile App Development with Flutter, Lecture 17: Build Souq Tripoli, a small shop app with a Product model, a CartProvider that owns a list, MultiProvider and a clean folder structure.">
+  <title>Lecture 21 · A Practical Provider App</title>
+  <meta name="description" content="Mobile App Development with Flutter, Lecture 21: Build Souq Tripoli, a small shop app with a Product model, a CartProvider that owns a list, MultiProvider and a clean folder structure.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Sora:wght@600;700&amp;display=swap" rel="stylesheet">
@@ -91,7 +91,7 @@
 <section class="slide">
   <div class="canvas"><div class="frame frame--title">
     <div class="stagger">
-      <p class="kicker">Lecture 17 · Mobile App Development</p>
+      <p class="kicker">Lecture 21 · Mobile App Development</p>
       <h1 class="hero">State Management 3:<br><span class="grad-text">A Practical Provider App</span></h1>
       <p class="lead lead--hero">Let's build <b>Souq Tripoli · <bdi lang="ar">سوق طرابلس</bdi></b>: a product grid, a details page and a cart, all sharing one <code>CartProvider</code>.</p>
       <div class="chips">
@@ -138,9 +138,9 @@
       </div>
       <div class="callout callout--ok goal"><svg class="ico"><use href="#i-target"/></svg><div><b>Goal:</b> Souq Tripoli, three screens that share <b>one cart</b> and update by themselves.</div></div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 21</span><span class="num"></span></footer>
   </div></div>
-  <aside class="notes"><p>Tell students that this structure (models, providers, screens, widgets) is what they will see in real Flutter apps, and what we keep using with APIs in Lectures 18–19.</p></aside>
+  <aside class="notes"><p>Tell students that this structure (models, providers, screens, widgets) is what they will see in real Flutter apps, and what we keep using with APIs in Lecture 22.</p></aside>
 </section>
 
 <!-- 03 · What we will build -->
@@ -182,7 +182,7 @@
         <div class="callout callout--info"><svg class="ico"><use href="#i-refresh"/></svg><div>Change it anywhere, <b>every screen updates</b></div></div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 21</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>We pick a shop over a to-do app because it shows everything at once: a list of data in a provider, a value computed from the list (the total), and the same data on three screens.</p></aside>
 </section>
@@ -213,12 +213,12 @@
 <span class="t-p">$</span> flutter pub add provider</pre>
         </div>
         <div class="callout callout--warn"><svg class="ico"><use href="#i-alert"/></svg><div>Delete <code>test/widget_test.dart</code>: it tests the old counter app</div></div>
-        <div class="callout callout--info"><svg class="ico"><use href="#i-copy"/></svg><div>Copy <code>app_button.dart</code> (Lecture 08), <code>app_theme.dart</code> (Lecture 10), <code>theme_provider.dart</code> and <code>theme_button.dart</code> (Lecture 16)</div></div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-copy"/></svg><div>Copy <code>app_button.dart</code> (Lecture 08), <code>app_theme.dart</code> (Lecture 10), <code>theme_provider.dart</code> and <code>theme_button.dart</code> (Lecture 14)</div></div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 21</span><span class="num"></span></footer>
   </div></div>
-  <aside class="notes"><p>Create the empty folders in VS Code first. <code>data/</code> holds a fixed list today; in Lectures 18–19 the products will come from the internet instead. Copy <code>app_button.dart</code> from Lecture 08, <code>theme/app_theme.dart</code> from Lecture 10, and <code>theme_provider.dart</code> and <code>theme_button.dart</code> from Lecture 16 (only the import path in <code>theme_button.dart</code> changes).</p></aside>
+  <aside class="notes"><p>Create the empty folders in VS Code first. <code>data/</code> holds a fixed list today; in Lecture 22 the products will come from the internet instead. Copy <code>app_button.dart</code> from Lecture 08, <code>theme/app_theme.dart</code> from Lecture 10, and <code>theme_provider.dart</code> and <code>theme_button.dart</code> from Lecture 14 (only the import path in <code>theme_button.dart</code> changes).</p></aside>
 </section>
 
 <!-- 05 · Step 1 model -->
@@ -259,7 +259,7 @@
       </div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 21</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p><code>id</code> is how we recognise a product, even if two products have the same name. <code>const</code> constructor: we can write the whole product list as a constant. The phone is a preview of the details page (Step 10): every field except <code>id</code> is shown there.</p></aside>
 </section>
@@ -275,7 +275,7 @@
       <div class="side">
         <div class="term code">
         <div class="term__bar"><i></i><i></i><i></i><span>lib/data/demo_products.dart</span></div>
-<pre class="hl">// A fixed list for now. In Lectures 18–19 products come from the internet.
+<pre class="hl">// A fixed list for now. In Lecture 22 products come from the internet.
 const List&lt;Product&gt; demoProducts = [
   Product(
     id: 'p1',
@@ -302,7 +302,7 @@ const List&lt;Product&gt; demoProducts = [
       </div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 21</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>Paste the six products from the complete example rather than typing them live. Ask a student to read the Arabic names aloud. The phone is a preview: in Step 9 these six products fill the grid.</p></aside>
 </section>
@@ -340,9 +340,9 @@ const List&lt;Product&gt; demoProducts = [
         <div class="defs"><div class="def"><code>any(...)</code><span>asks: “is there <b>any</b> item with this id?”</span></div></div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 21</span><span class="num"></span></footer>
   </div></div>
-  <aside class="notes"><p>Try <code>cart.items.add(...)</code> live to show the error, then delete the line. We compare by <code>id</code> because ids are how real apps (and the APIs in Lecture 18) identify things.</p></aside>
+  <aside class="notes"><p>Try <code>cart.items.add(...)</code> live to show the error, then delete the line. We compare by <code>id</code> because ids are how real apps (and the APIs in Lecture 15) identify things.</p></aside>
 </section>
 
 <!-- 08 · Step 4 change the cart -->
@@ -389,7 +389,7 @@ void clear() {
         </table>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 21</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p><code>removeWhere</code> removes every item that matches the test. Quantities (2 × Dates) are a homework exercise.</p></aside>
 </section>
@@ -442,7 +442,7 @@ double get totalPrice {
         </div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 21</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p><code>toggle</code> does not call <code>notifyListeners()</code> itself: <code>add</code> and <code>remove</code> already do. The provider is now finished: about 50 lines of plain Dart and no widgets. The table: with Dates, Honey and Green tea in the cart, <code>totalPrice</code> is 68.5 (shown as “68.50 LYD” in Step 12).</p></aside>
 </section>
@@ -481,11 +481,11 @@ double get totalPrice {
             </li></ul>
           </li></ul>
         </div>
-        <div class="defs"><div class="def"><code>CartProvider</code><span>the shop data</span></div><div class="def"><code>ThemeProvider</code><span>dark mode (from Lecture 16)</span></div></div>
-        <div class="callout callout--info"><svg class="ico"><use href="#i-palette"/></svg><div><code>SouqApp</code> watches <code>ThemeProvider</code> for <code>themeMode</code>, exactly like Lecture 16, with <code>theme: buildTheme(Brightness.light)</code>, <code>darkTheme: buildTheme(Brightness.dark)</code> (Lecture 10) and <code>home: const ProductsScreen()</code></div></div>
+        <div class="defs"><div class="def"><code>CartProvider</code><span>the shop data</span></div><div class="def"><code>ThemeProvider</code><span>dark mode (from Lecture 14)</span></div></div>
+        <div class="callout callout--info"><svg class="ico"><use href="#i-palette"/></svg><div><code>SouqApp</code> watches <code>ThemeProvider</code> for <code>themeMode</code>, exactly like Lecture 14, with <code>theme: buildTheme(Brightness.light)</code>, <code>darkTheme: buildTheme(Brightness.dark)</code> (Lecture 10) and <code>home: const ProductsScreen()</code></div></div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 21</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>Both providers sit above <code>MaterialApp</code>, so every screen we push can use them. The full <code>SouqApp</code> class is in the complete example.</p></aside>
 </section>
@@ -519,7 +519,7 @@ return IconButton(
       <div class="explain stagger">
         <div class="say"><p>Written once in <code>lib/widgets/<wbr>cart_badge.dart</code>, used on <b>two screens</b>.</p><p>It watches only <code>count</code>, and opens the cart when tapped.</p></div>
         <div class="callout callout--info"><svg class="ico"><use href="#i-info"/></svg><div><code>isLabelVisible: count &gt; 0</code>: no red number while the cart is empty</div></div>
-        <div class="callout callout--ok"><svg class="ico"><use href="#i-check-circle"/></svg><div>Compare with Lecture 15: no <code>count</code> parameter, no callback. The badge finds the cart <b>by itself</b>.</div></div>
+        <div class="callout callout--ok"><svg class="ico"><use href="#i-check-circle"/></svg><div>Compare with Lecture 13: no <code>count</code> parameter, no callback. The badge finds the cart <b>by itself</b>.</div></div>
       </div>
       <div class="ph ph--teal" style="--pw:13.5cqw;">
         <div class="ph__scr"><div class="ph__island"></div>
@@ -527,9 +527,9 @@ return IconButton(
         </div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 21</span><span class="num"></span></footer>
   </div></div>
-  <aside class="notes"><p>Compare with Lecture 15: no <code>count</code> parameter, no callback. The badge finds the cart by itself.</p></aside>
+  <aside class="notes"><p>Compare with Lecture 13: no <code>count</code> parameter, no callback. The badge finds the cart by itself.</p></aside>
 </section>
 
 <!-- 12 · Step 8 ProductCard -->
@@ -566,7 +566,7 @@ IconButton(
         </div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 21</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p><code>inCart</code> decides only which icon to show. That is a UI decision, so it is fine in the widget.</p></aside>
 </section>
@@ -596,7 +596,7 @@ IconButton(
 ),</pre>
       </div>
       <div class="explain stagger">
-        <div class="say"><p>AppBar: <code>actions: const [ThemeButton(), CartBadge()]</code>, two reusable widgets.</p><p><code>GridView.builder</code> from Lecture 14.</p></div>
+        <div class="say"><p>AppBar: <code>actions: const [ThemeButton(), CartBadge()]</code>, two reusable widgets.</p><p><code>GridView.builder</code> from Lecture 12.</p></div>
         <div class="callout callout--ok"><svg class="ico"><use href="#i-play"/></svg><div>Run it: tap add-to-cart on two cards. The icons change and the badge shows <b>2</b>.</div></div>
         <div class="callout callout--warn"><svg class="ico"><use href="#i-alert"/></svg><div>To run now, make placeholder <code>CartScreen</code> and <code>ProductDetailsScreen</code> classes first.</div></div>
       </div>
@@ -606,7 +606,7 @@ IconButton(
         </div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 21</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>Run the app now. Tap add-to-cart on two cards: the icons change and the badge shows 2. To run before steps 10–12, the imported screens must exist: create a placeholder <code>CartScreen</code> that returns <code>const Scaffold()</code>, and a placeholder <code>ProductDetailsScreen</code> with <code>required this.product</code> and <code>final Product product;</code>. We fill them in next.</p></aside>
 </section>
@@ -658,7 +658,7 @@ bottomNavigationBar: SafeArea(
       </div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 21</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>Tap Add on the details page, then go back: the card on the grid already shows the “remove” icon. No <code>pop</code> result, no callback.</p></aside>
 </section>
@@ -703,7 +703,7 @@ body: items.isEmpty
         </div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 21</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>We read <code>cart.items</code> once into <code>items</code>, because the getter makes a new copy each time it is called.</p></aside>
 </section>
@@ -755,7 +755,7 @@ Text(
       </div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 21</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>Full run (Practical example 4): add Dates and Honey from the grid, add Green tea from its details page, open the cart: “My Cart (3)”, total 68.50 LYD. Delete Dates: 53.50 LYD. Clear: “Your cart is empty”, 0.00 LYD. Go back: every button and badge already agrees. This is “the UI updates automatically”.</p></aside>
 </section>
@@ -784,7 +784,7 @@ Text(
         <div class="callout callout--info"><svg class="ico"><use href="#i-bulb"/></svg><div>Could you explain it to a shop owner without the screen? Then it goes in the <b>provider</b>.</div></div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 21</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>Rule of thumb: if you could explain it to a shop owner without mentioning the screen (“the total is the sum of the prices”), it belongs in the provider.</p></aside>
 </section>
@@ -821,12 +821,12 @@ void main() {
 <span class="t-ok">00:02 +1: All tests passed!</span></pre>
         </div>
         <div class="callout callout--info"><svg class="ico"><use href="#i-file"/></svg><div>File: <code>test/cart_provider_test.dart</code>; run <code>flutter test</code> → “All tests passed!”</div></div>
-        <div class="callout callout--ok"><svg class="ico"><use href="#i-flask"/></svg><div>Remember Lecture 15’s “hard to test”? Logic in a plain class is <b>easy</b> to test.</div></div>
+        <div class="callout callout--ok"><svg class="ico"><use href="#i-flask"/></svg><div>Remember Lecture 13’s “hard to test”? Logic in a plain class is <b>easy</b> to test.</div></div>
         <div class="callout callout--warn"><svg class="ico"><use href="#i-alert"/></svg><div>Change <code>60.0</code> to <code>61.0</code>: it fails with <code>Expected: &lt;61.0&gt; Actual: &lt;60.0&gt;</code></div></div>
         <div class="callout callout--info"><svg class="ico"><use href="#i-package"/></svg><div><code>souq_tripoli</code> is the <code>name:</code> in your <code>pubspec.yaml</code></div></div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 21</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p><code>souq_tripoli</code> is the <code>name:</code> in <code>pubspec.yaml</code>; use your own app’s name. <code>expect(actual, expected)</code> checks a value; change 60.0 to 61.0 to see a failing test. The complete example has a second test for <code>toggle</code>.</p></aside>
 </section>
@@ -851,11 +851,11 @@ void main() {
       </article>
       <div class="side stagger">
         <div class="callout callout--info"><svg class="ico"><use href="#i-folder"/></svg><div>Think: where would a new <code>FavoritesProvider</code> and a <code>FavoritesScreen</code> go?</div></div>
-        <div class="card next"><h4>Coming up</h4><p>Lectures 18–19: the products come from the internet</p></div>
+        <div class="card next"><h4>Coming up</h4><p>Lecture 22: the products come from the internet</p></div>
         <div class="qa__big grad-text" style="font-size:4.6cqw;">Questions?</div>
       </div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 21</span><span class="num"></span></footer>
   </div></div>
   <aside class="notes"><p>Open the folder tree in VS Code and ask students where they would put a new <code>FavoritesProvider</code> and a <code>FavoritesScreen</code>. That is homework 2.</p></aside>
 </section>
@@ -875,9 +875,9 @@ void main() {
       <article class="card" style="display:grid; gap:.8cqw; align-content:start;"><div style="display:flex; align-items:center; justify-content:space-between;"><span class="itile"><svg class="ico"><use href="#i-search"/></svg></span><span class="badge badge--warm">harder</span></div><h3>5 · Search</h3><p style="font-size:1.2cqw; line-height:1.45;">A <code>TextField</code> that matches the English or Arabic name: “tea” or “<bdi lang="ar">شاي</bdi>”.</p></article>
       <div style="display:grid; align-content:center;"><div class="callout callout--info"><svg class="ico"><use href="#i-bulb"/></svg><div>4 and 5: the chosen category and the search text are <b>local</b> state, so <code>setState</code> is the right tool.</div></div></div>
     </div>
-    <footer class="foot"><span>Mobile App Development · Lecture 17</span><span class="num"></span></footer>
+    <footer class="foot"><span>Mobile App Development · Lecture 21</span><span class="num"></span></footer>
   </div></div>
-  <aside class="notes"><p>Exercises 4 and 5 are a good check of Lecture 15: the selected category and the search text are <b>local</b> state, so <code>setState</code> is the right tool there. Full details are in the Homework section of the plan.</p></aside>
+  <aside class="notes"><p>Exercises 4 and 5 are a good check of Lecture 13: the selected category and the search text are <b>local</b> state, so <code>setState</code> is the right tool there. Full details are in the Homework section of the plan.</p></aside>
 </section>
 
 </main>
